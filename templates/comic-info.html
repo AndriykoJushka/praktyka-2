@@ -1,0 +1,107 @@
+<div class="row">
+    <div class="col-md-4">
+        <div class="comic-cover">
+            <img src="cover.png" class="img-fluid" alt="Comic Cover">
+            <div class="comic-title">{{ .Comic.Name }}</div>
+            <div class="comic-info" style="display: flex; align-items: center;">
+                <div class="author" style="margin-right: 5px;">{{ .Comic.Author }} |</div>
+                <div class="genres" style="margin: 0; position: static;">{{ .Comic.Genres }}</div>
+            </div>
+        </div>
+        <div style="z-index: 1; padding: .5em; display: flex; gap: .5em;">
+            <button style="width: 50%;" class="btn btn-primary" data-toggle="modal"
+                data-target="#comicEditModal">Edit</button>
+            <button style="width: 50%;" class="btn btn-danger" hx-trigger="click" hx-post="/api/delete-comic?id=3"
+                hx-target="#root" hx-swap="innerHTML">Delete</button>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="row d-flex align-items-center justify-content-between" style="margin:5px">
+            <h2>Розділи</h2>
+            <button style="border: transparent; background-color: #e9eaeb;" data-toggle="modal"
+                data-target="#chapterAddModal">
+                <img src="add.png" style="height: 20px;"> Add new chapter
+            </button>
+        </div>
+        <ul class="list-group list-group-flush" id="sectionsList">
+            {{range .ChapterPublications}}
+            <li class="list-group-item d-flex align-items-center justify-content-between">
+                {{.ChapterNo}}. {{.Name}}
+                <button type="button" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                        class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path
+                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                        <path fill-rule="evenodd"
+                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                    </svg>
+                </button>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</div>
+
+<!-- Update comic Modal -->
+<div class="modal fade" id="comicEditModal" tabindex="-1" role="dialog" aria-labelledby="comicEditModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="comicEditModalLabel">Edit comic</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form hx-trigger="submit" hx-swap="innerHTML" hx-target=".comic-cover" hx-post="/api/update-comic">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="name" class="form-control" value="{{.Comic.Name}}" name="name">
+                    </div>
+                    <div hx-trigger="load" hx-target="this" hx-swap="outerHTML" hx-get="/api/comic-genres"></div>
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="author" class="form-control" value="{{.Comic.Author}}" name="author">
+                    </div>
+                    <div class="form-group">
+                        <label for="decription">Decription</label>
+                        <input type="description" class="form-control" value="{{.Comic.Description}}"
+                            name="description">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Edit"></input>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add chapter Modal -->
+<div class="modal fade" id="chapterAddModal" tabindex="-1" role="dialog" aria-labelledby="chapterAddModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chapterAddModalLabel">Add new chapter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form hx-trigger="submit" hx-swap="innerHTML" hx-target="#sectionsList"
+                    hx-post="/api/add-chapter-publication">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="name" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="no">Chapter number</label>
+                        <input type="no" class="form-control" name="no">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Add"></input>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

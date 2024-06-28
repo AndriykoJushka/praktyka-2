@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-md-3 mb-12 mt-5">
+        <div class="filter-section">
+            <h4>Filter</h4>
+            <form id="filterForm" hx-get="/api/filter-comics" hx-trigger="submit" hx-target="#comicsContainer"
+                hx-swap="innerHTML">
+                {{range .Genres}}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="genres" value="{{.}}">
+                    <label class="form-check-label" for="actionGenre">
+                        {{.}}
+                    </label>
+                </div>
+                {{end}}
+                <input class="btn btn-outline-secondary mt-3" type="submit" value="Filter">
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9" style="margin-bottom: 5em;">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+            <h2>Comic</h2>
+            <button style="margin-left: 59%; border: transparent; background-color: #e9eaeb;" data-toggle="modal"
+                data-target="#comicAddModal">
+                <img src="add.png" style="height: 20px;">
+                Add new</button>
+        </div>
+        <div class="d-flex flex-wrap" style="gap: 1.5em; justify-content: space-between;" id="comicsContainer">
+            <!--<div id="root" class="row" hx-get="/api/comics" hx-trigger="load" hx-target="this"
+                hx-swap="innerHTML">
+            </div> -->
+            {{range .Comics}}
+            <div style="max-width: 30%;">
+                <a href="comic-page.html?id={{ .Id }}" class="image-link">
+                    <div class="comic-cover">
+                        <img src="cover.png" class="img-fluid" alt="Comic Cover">
+                        <div class="comic-title">{{ .Name }}</div>
+                        <div class="comic-info" style="display: flex; align-items: center;">
+                            <div class="author" style="margin-right: 5px;">{{ .Author }} |</div>
+                            <div class="genres" style=" margin: 0; position: static;">{{ .Genres }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+
+<!-- Add comic Modal -->
+<div class="modal fade" id="comicAddModal" tabindex="-1" role="dialog" aria-labelledby="comicAddModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="comicAddModalLabel">Add new Comic</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form hx-trigger="submit" hx-swap="innerHTML" hx-target="#comicsContainer" hx-post="/api/add-comic">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="name" class="form-control" id="name" name="name">
+                    </div>
+                    <div hx-trigger="load" hx-target="this" hx-swap="outerHTML" hx-get="/api/comic-genres"></div>
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="author" class="form-control" id="author" name="author">
+                    </div>
+                    <div class="form-group">
+                        <label for="decription">Decription</label>
+                        <input type="description" class="form-control" id="description" name="description">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Add"></input>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.dropdown-item[href="#"]').click(function (e) {
+            e.preventDefault();
+            $('#comicAddModal').modal('show');
+        });
+    });
+</script>
